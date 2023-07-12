@@ -1,0 +1,7 @@
+[project]
+name = "well_point_interpolate"
+version = "0.0.1"
+description = "A python tool for interpolating points (XYZ) from a well trajectory and one or more measured depths"
+readme = "README.md"
+requires-python = ">=3.8"
+authors = [{name = "Esri Professional Services"}]
