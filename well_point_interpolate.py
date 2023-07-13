@@ -84,7 +84,7 @@ def get_logger(log_level: int) -> logging.Logger:
 def add_latlon(point: dict, transformer: pyproj.Transformer) -> dict:
     """Calculate a point's WGS84 latitude/longitude from x, y and wkid"""
     try:
-        lon, lat = transformer.transform(point["x"], point["y"])
+        lon, lat = transformer.transform(xx=point["x"], yy=point["y"])
     except TypeError:
         lon = lat = None
     point["lat"] = lat
@@ -174,10 +174,14 @@ def main() -> None:
     if get_latlon:
         logger.debug(f"Projecting XY coordinates (WKID {wkid}) to WGS84 lat/lon")
         try:
-            t = pyproj.Transformer.from_crs(wkid, 4326)
+            t = pyproj.Transformer.from_crs(crs_from=wkid, crs_to=4326, always_xy=True)
             points = [add_latlon(p, t) for p in points]
         except pyproj.exceptions.CRSError:
             logger.error(f"Could not create a transformation from WKID {wkid} to WGS84")
+    elif wkid:
+        logger.warning(
+            f"WKID was supplied without x0/y0, so WGS84 lat/lon cannot be determined"
+        )
 
     logger.debug("Processsed points:")
     for point in points:
